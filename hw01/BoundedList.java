@@ -9,10 +9,12 @@ public class BoundedList<T> implements Iterable<T>, List<T> {
   private T[] elements;
   private int currentSize = 0; // keeps track of how many elements are in list
 
-  // checks the index against the capacity, to ensure index is within bounds
-  private boolean goodIndex(int index) 
+  /**
+   * helps determine if index is valid to access elements effectively
+   */
+  private boolean isWithinBounds(int index)
   {
-    return index >= 0 || index < elements.length;
+    return index >= 0 && index < currentSize;
   }
 
   /**
@@ -62,9 +64,10 @@ public class BoundedList<T> implements Iterable<T>, List<T> {
   @Override
   public T get(int index) throws IndexOutOfBoundsException {
     if(index < 0) throw new IndexOutOfBoundsException("negative index");
-    else if(!goodIndex(index)) 
+    else if(!isWithinBounds(index)) 
       throw new IndexOutOfBoundsException("outside the bounds of the fixedList at size " + String.valueOf(elements.length));
-    return elements[index]; 
+    T item = elements[index];
+    return item;
   }
 
   /**
@@ -73,7 +76,7 @@ public class BoundedList<T> implements Iterable<T>, List<T> {
   @Override
   public void set(int index, T data) throws IndexOutOfBoundsException {
     if(index < 0) throw new IndexOutOfBoundsException("negative index");
-    else if(!goodIndex(index)) 
+    else if(!isWithinBounds(index)) 
       throw new IndexOutOfBoundsException("outside the bounds of the fixedList at size " + String.valueOf(elements.length));
     elements[index] = data;
   }
@@ -81,9 +84,9 @@ public class BoundedList<T> implements Iterable<T>, List<T> {
   @Override
   public void add(int index, T data) throws IndexOutOfBoundsException, IllegalStateException {
     if(index < 0) throw new IndexOutOfBoundsException("negative index");
-    else if(!goodIndex(index)) 
+    else if(!(index == currentSize) && !isWithinBounds(index)) 
       throw new IndexOutOfBoundsException("outside the bounds of the fixedList at size " + String.valueOf(elements.length));
-    else if(index > currentSize) 
+    else if(index > currentSize && currentSize != 0) 
       throw new IndexOutOfBoundsException("adding more than +" + String.valueOf(index - currentSize) + " the current size");
     else if(currentSize == elements.length) 
       throw new IllegalStateException("list is full");
@@ -112,12 +115,12 @@ public class BoundedList<T> implements Iterable<T>, List<T> {
   public void remove(int index) throws IndexOutOfBoundsException {
     // validate index
     if(index < 0) throw new IndexOutOfBoundsException("negative index");
-    else if(!goodIndex(index)) 
+    else if(!isWithinBounds(index)) 
       throw new IndexOutOfBoundsException("outside the bounds of the fixedList at size " + String.valueOf(elements.length));
     else if(index > currentSize) 
       throw new IndexOutOfBoundsException("removing more than +" + String.valueOf(index - currentSize) + " the current size");
-    //else if(elements.length == 0) 
-    //throw new IllegalStateException("list is empty");
+    else if(currentSize == 0) 
+      throw new IndexOutOfBoundsException("list is empty");
 
     // get element at index
     //T element = elements[index];
@@ -176,81 +179,22 @@ public class BoundedList<T> implements Iterable<T>, List<T> {
     // completely full
     // bad indices
 
-    //List<Integer> list = new BoundedList<Integer>(5);
-    BoundedList<Integer> list = new BoundedList<Integer>(5);
-    // test iterable
-    //for(int i = 0; i < 3; i++)
-      //{
-      //list.add(i, i);
-      //}
-    //System.out.println(list);
-    //for(Integer el : list)
-    //Iterator<Integer> it = list.iterator();
-    //while(it.hasNext())
-    //{
-    //System.out.println(it.next());
-    //}
-    //for(Integer el : list) System.out.println(el);
-
-    //try 
-    //{
-    //for(int i = 0; i < 5; i++)
-    //{
-    ////if(i > 0) 
-    ////{
-    ////Integer a = list.get(0); 
-    ////System.out.println(a);
-    ////list.set(0, 0);
-    ////Integer d = list.get(10);
-    ////} 
-    ////Integer b = list.get(-1);
-    ////if(i >= 4) 
-    ////{
-    ////Integer c = list.get(4); 
-    ////System.out.println(c);
-    ////}
-
-    ////list.set(-1, 0);
-    ////list.set(10, 0);
-
-    //list.add(0, i);
-    ////list.add(-1, i);
-    ////list.add(10, i);
-
-    //System.out.println(list);
-    //}
-
-    //list.remove(3);
-    //System.out.println(list);
-
-    ////list.remove(-1);
-    ////System.out.println(list);
-
-    ////list.remove(10); 
-    ////System.out.println(list);
-
-    //list.remove(0);
-    //System.out.println(list);
-
-    //list.remove(0);
-    //System.out.println(list);
-
-    //list.remove(0);
-    //System.out.println(list);
-
-    //list.remove(0);
-    //System.out.println(list);
-
-    //list.remove(0);
-    //System.out.println(list);
-
-    ////list.remove(0);
-    ////System.out.println(list);
-    //} 
-    //catch (Exception e)
-    //{
-    //e.printStackTrace();
-    ////System.out.println(e.getMessage());
-    //}   
+    List<Integer> list = new BoundedList<Integer>(30);
+    list.add(0, 0);
+    list.add(1, 1);
+    list.add(2, 2);
+    list.add(3, 3);
+    System.out.print(list.size() + " " );
+    System.out.println(list); 
+    list.remove(list.size()-2);
+    System.out.print(list.size() + " " );
+    System.out.println(list);
+    list.remove(1);
+    System.out.print(list.size() + " " );
+    System.out.println(list);
+    for(int i = 0; i < 30; i++)
+    {
+      System.out.println(i + " " + list.get(i));
+    }
   }
 }
