@@ -2,7 +2,6 @@
 // ANY SOURCES OR COLLABORATION YOU USED HERE
 
 import java.util.NoSuchElementException;
-import java.util.Iterable;
 import java.util.Iterator;
 
 public class LinkedList<T> implements Iterable<T>, List<T> {
