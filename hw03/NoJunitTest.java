@@ -7,6 +7,8 @@
 //
 //import org.junit.Test;
 
+import java.util.*;
+
 public class NoJunitTest{
   //@Test
   public void size0get()
@@ -137,6 +139,16 @@ public class NoJunitTest{
     System.out.println("list.size() = " + list.size());
   }
 
+  public void testIter(int size)
+  {
+    LinkedList<Integer> list = new LinkedList<Integer>();
+    for(int i = 0; i < size; i++)
+      list.add(i, i);
+    for(Integer i : list)
+      System.out.print(i + " ");
+    System.out.println();
+  }
+
   public static void main(String[] args)
   {
     NoJunitTest tst = new NoJunitTest();
@@ -144,7 +156,10 @@ public class NoJunitTest{
     //tst.size0addInvalidandValid();
     //tst.size0remove();
     //tst.normalUsage();
-    tst.removeAll();
+    //tst.removeAll();
+    tst.testIter(0);
+    tst.testIter(1);
+    tst.testIter(15);
   }
 
 }
