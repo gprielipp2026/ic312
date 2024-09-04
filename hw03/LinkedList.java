@@ -171,7 +171,7 @@ public class LinkedList<T> implements Iterable<T>, List<T> {
     // bounded list with a "curInd" and check against the
     // length and just call get(curInd) in next()
     private Node cur = head;
-    public boolean hasNext() { return cur.next != null; }
+    public boolean hasNext() { return cur != null; }
     public T next() 
     {
       T data = cur.data;
