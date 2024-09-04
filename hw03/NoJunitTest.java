@@ -83,9 +83,11 @@ public class NoJunitTest{
     list.add(1, 4);
     list.add(0, 5);
     list.add(5, 6);
-
+    list.add(list.size()-2, 7);
+    list.add(list.size(), 0);
+    list.print();
     //assertThat(list.size(), equalTo(7));
-    if(list.size() != 7) System.out.println("failed adding");
+    //if(list.size() != 7) System.out.println("failed adding");
 
     int count = 0;
     for(int i = 0; i < list.size(); i++)
@@ -111,7 +113,7 @@ public class NoJunitTest{
     System.out.println("After removeall");
     list.print();
     //assertThat(list.size(), equalTo(7-count));
-    if(list.size() != (7-count)) System.out.println("removeall failed");
+    //if(list.size() != (7-count)) System.out.println("removeall failed");
 
 
     int cursize = list.size();
@@ -122,13 +124,27 @@ public class NoJunitTest{
     if(list.size() != cursize - 1) System.out.println("Failed remove");
   }
 
+  public void removeAll()
+  {
+    LinkedList<Integer> list = new LinkedList<Integer>();
+    for(int i = 0; i < 10; i++)
+    {
+      list.add(i, 0);
+    }
+    list.print();
+    list.removeAll(0);
+    list.print();
+    System.out.println("list.size() = " + list.size());
+  }
+
   public static void main(String[] args)
   {
     NoJunitTest tst = new NoJunitTest();
-    tst.size0get();
-    tst.size0addInvalidandValid();
-    tst.size0remove();
-    tst.normalUsage();
+    //tst.size0get();
+    //tst.size0addInvalidandValid();
+    //tst.size0remove();
+    //tst.normalUsage();
+    tst.removeAll();
   }
 
 }

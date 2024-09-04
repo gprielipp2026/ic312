@@ -2,8 +2,10 @@
 // ANY SOURCES OR COLLABORATION YOU USED HERE
 
 import java.util.NoSuchElementException;
+import java.util.Iterable;
+import java.util.Iterator;
 
-public class LinkedList<T> implements List<T> {
+public class LinkedList<T> implements Iterable<T>, List<T> {
   // TODO your private inner classes and fields...
   private int length = 0;
   private class Node {
@@ -16,7 +18,7 @@ public class LinkedList<T> implements List<T> {
 
   @Override
   public T get(int index) throws IndexOutOfBoundsException {
-    if(index < 0 || index > length - 1) throw new IndexOutOfBoundsException();
+    if(index < 0 || index >= length) throw new IndexOutOfBoundsException();
     return get_r(head, index);
   }
 
@@ -28,7 +30,7 @@ public class LinkedList<T> implements List<T> {
 
   @Override
   public void set(int index, T data) throws IndexOutOfBoundsException {
-    if(index < 0 || index > length - 1) throw new IndexOutOfBoundsException();
+    if(index < 0 || index >= length) throw new IndexOutOfBoundsException();
     // have to have elements before you can set them
     if( head == null )
       head = new Node(data, null);
@@ -45,7 +47,7 @@ public class LinkedList<T> implements List<T> {
   public void add(int index, T data) throws IndexOutOfBoundsException {
     // need to be able to add elements to start
     //System.out.println("add(" + index + ", " + data + ")");
-    if(head != null && (index < 0 || index > length - 1)) throw new IndexOutOfBoundsException();
+    if(head != null && (index < 0 || index > length)) throw new IndexOutOfBoundsException();
     if( head == null && index == 0)
       head = new Node(data, null);
     else if (head == null && index != 0)
@@ -87,7 +89,7 @@ public class LinkedList<T> implements List<T> {
 
   @Override
   public void remove(int index) throws IndexOutOfBoundsException {
-    if(index < 0 || index > length - 1) throw new IndexOutOfBoundsException();
+    if(index < 0 || index >= length) throw new IndexOutOfBoundsException();
     else
       head = remove_r(head, index);
     length--;
@@ -156,5 +158,26 @@ public class LinkedList<T> implements List<T> {
       return cur;
     else
       return penultimate(cur.next);
+  }
+
+  // extra credit
+  public Iterator<T> iterator()
+  {
+    return new Iter();
+  }
+
+  private class Iter implements Iterator<T>
+  {
+    // I could do a similar thing to what I did in the
+    // bounded list with a "curInd" and check against the
+    // length and just call get(curInd) in next()
+    private Node cur = head;
+    public boolean hasNext() { return cur.next != null; }
+    public T next() 
+    {
+      T data = cur.data;
+      cur = cur.next;
+      return data;
+    }
   }
 }
