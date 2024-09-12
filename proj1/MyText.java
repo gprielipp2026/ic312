@@ -1,5 +1,4 @@
-/**
- * George Prielipp (265112)
+/** * George Prielipp (265112)
  * MyText.java
  *
  * implements the Text interface
@@ -17,7 +16,8 @@ public class MyText implements Text
    * instead of up and down
    */
   private class Node
-  { char letter;
+  { 
+    char letter;
     Node left;
     Node right;
 
@@ -36,7 +36,7 @@ public class MyText implements Text
   }
 
   // this is the current cursor position
-  private Node current = new Node(' ', null, null);
+  private Node current = new Node('"', null, null);
 
   /** Returns the character at the current cursor position */
   public char get() throws NoSuchElementException
@@ -67,7 +67,7 @@ public class MyText implements Text
     // remove current
     if(left != null)
       left.right = right;
-    
+
     if(right != null)
       right.left = left;
 
@@ -142,7 +142,8 @@ public class MyText implements Text
     else
     {
       int count = 1 + printGoingLeft(n.left);
-      System.out.print(n.letter);
+      if(n.letter != '&' && n.right != null)
+        System.out.print(n.letter);
       return count;
     }
   }
@@ -154,7 +155,8 @@ public class MyText implements Text
   {
     if( n != null ) 
     {
-      System.out.print(n.letter);
+      if(n.letter != '"' && n.right != null)
+        System.out.print(n.letter);
       printGoingRight(n.right);
     }
   }
