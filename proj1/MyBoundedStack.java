@@ -6,6 +6,10 @@
  * Utilizes a circular array
  */
 
+/**
+ * try to keep track of a "size" <-- number of elements in the stack
+ */
+
 import java.util.NoSuchElementException;
 
 public class MyBoundedStack<T> implements BoundedStack<T> {
@@ -13,7 +17,7 @@ public class MyBoundedStack<T> implements BoundedStack<T> {
   private int capacity;
   private int top;
   private int bottom;
-
+  private int numElements;
   /**
    * constructor requires an initial size
    */
@@ -22,6 +26,7 @@ public class MyBoundedStack<T> implements BoundedStack<T> {
     this.capacity = capacity;
     this.stack = makeStack(this.capacity);
     this.top = this.bottom = 0;
+    this.numElements = 0;
   }
 
   /**
@@ -30,6 +35,8 @@ public class MyBoundedStack<T> implements BoundedStack<T> {
    */
   private void increment()
   {
+    if(numElements < capacity) numElements++;
+
     top = (top + 1) % capacity;
     // see if top is 1 behind bottom
     if(top % capacity == bottom)
@@ -44,6 +51,8 @@ public class MyBoundedStack<T> implements BoundedStack<T> {
    */
   private void decrement()
   {
+    if(numElements > 0) numElements--;
+
     if(top - 1 < 0)
     {
       // only because Java does weird mod math
@@ -116,7 +125,7 @@ public class MyBoundedStack<T> implements BoundedStack<T> {
   }
 
   /** Returns whether the stack is currently empty. */
-  public boolean isEmpty() { return top == bottom; }
+  public boolean isEmpty() { numElements == 0; } 
 
   /** Removes all elements from the stack.
    *

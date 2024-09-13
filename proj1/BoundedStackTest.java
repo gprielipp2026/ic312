@@ -29,6 +29,47 @@ public class BoundedStackTest
   } 
 
   @Test
+  public void cap2()
+  {
+    BoundedStack<String> stack = new MyBoundedStack<String>(2);
+    stack.push("what's");
+    stack.push("up");
+    stack.push("with");
+    stack.push("that");
+    assertEquals("fail", "that", stack.pop());
+    assertEquals("fail", "with", stack.pop());
+  }
+
+  @Test
+  public void pushPastAndPopNotEmpty()
+  {
+    BoundedStack<Integer> stack = new MyBoundedStack<Integer>(5);
+    Stack<Integer> tstack = new Stack<Integer>();
+
+    for(int i = 0; i < 8; i++)
+    {
+      stack.push(i);
+      tstack.push(i);
+    }
+
+    for(int i = 0; i < 2; i++)
+    {
+      assertEquals("failure - stacks not the same", stack.pop(), tstack.pop());
+    }
+
+    for(int i = 0; i < 3; i++)
+    {
+      stack.push(i+10);
+      tstack.push(i+10);
+    }
+
+    while(!stack.isEmpty())
+    {
+      assertEquals("failure - stacks not the same", stack.pop(), tstack.pop());
+    }
+  }
+
+  @Test
   public void testFill()
   {
     BoundedStack<Integer> stack = new MyBoundedStack<Integer>(10);

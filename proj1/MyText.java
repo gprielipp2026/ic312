@@ -41,7 +41,8 @@ public class MyText implements Text
   /** Returns the character at the current cursor position */
   public char get() throws NoSuchElementException
   {
-    if( current == null ) throw new NoSuchElementException();
+    //if( current == null ) throw new NoSuchElementException();
+    if( !canMoveRight() ) throw new NoSuchElementException();
     return current.letter;
   }
 
@@ -60,7 +61,8 @@ public class MyText implements Text
    */
   public void delete() throws NoSuchElementException
   { 
-    if( current == null ) throw new NoSuchElementException();
+    //if( current == null ) throw new NoSuchElementException();
+    if( !canMoveRight() ) throw new NoSuchElementException();
     Node left = current.left;
     Node right = current.right;
 
