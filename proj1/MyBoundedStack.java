@@ -18,15 +18,25 @@ public class MyBoundedStack<T> implements BoundedStack<T> {
   private int top;
   private int bottom;
   private int numElements;
+
   /**
-   * constructor requires an initial size
+   * initialize all values
    */
-  public MyBoundedStack(int capacity)
+  private void init(int capacity)
   {
     this.capacity = capacity;
     this.stack = makeStack(this.capacity);
     this.top = this.bottom = 0;
     this.numElements = 0;
+
+  }
+
+  /**
+   * constructor requires an initial size
+   */
+  public MyBoundedStack(int capacity)
+  {
+    init(capacity);
   }
 
   /**
@@ -100,20 +110,20 @@ public class MyBoundedStack<T> implements BoundedStack<T> {
    */
   public void setCapacity(int capacity)
   {
-    T[] newStack = makeStack(capacity);
-    
-    // I was making this to hard math-wise
-    int i;
-    for(i = capacity-1; i >= 0 && !isEmpty(); i--)
+    // add the up to the max capacity of the new stack, or at least empty this stack
+    MyBoundedStack<T> revStackNewCap = new MyBoundedStack<T>(capacity); 
+    for(int i = 0; i < capacity && !isEmpty(); i++)
     {
       T data = pop();
-      newStack[i] = data;   
+      revStackNewCap.push(data);
     } 
-    // need to figure out the top and bottom
-    this.top = 0; // because next thing should be capacity + 1 % capacity
-    this.bottom = i+1; 
-    this.stack = newStack;
-    this.capacity = capacity; 
+
+    // reset this stack
+    init(capacity);
+
+    // put the new stack back into this one
+    while(!revStackNewCap.isEmpty())
+      push(revStackNewCap.pop()); 
   }
 
   /**
@@ -121,11 +131,13 @@ public class MyBoundedStack<T> implements BoundedStack<T> {
    */
   private T[] makeStack(int size)
   {
-    return (T[])(new Object[size]);
+    @SuppressWarnings("unchecked")
+    T[] arr = (T[]) new Object[size]; 
+    return arr;
   }
 
   /** Returns whether the stack is currently empty. */
-  public boolean isEmpty() { numElements == 0; } 
+  public boolean isEmpty() { return numElements == 0; } 
 
   /** Removes all elements from the stack.
    *
@@ -133,7 +145,9 @@ public class MyBoundedStack<T> implements BoundedStack<T> {
    */
   public void clear()
   {
-    top = bottom;
+    //top = bottom;
+    stack = makeStack(capacity);
+    top = bottom = numElements = 0;
   }
 
 }

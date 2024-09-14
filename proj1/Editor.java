@@ -40,7 +40,7 @@ public class Editor {
   {
     if(undoStack.isEmpty()) return false;
     Action a = undoStack.pop();
-    redoStack.push(a);
+    //redoStack.push(a);
     process(a.computeOpposite());
     return true;
   }
@@ -68,6 +68,7 @@ public class Editor {
     {
       // only because it wasn't handling spaces
       processLine(commands, false);
+      processLine("<", false);
       return;
     }
     Scanner inStream = new Scanner(new StringReader(commands));
@@ -93,7 +94,7 @@ public class Editor {
           if (pushUndo)
           {
             undoStack.push(new Action(line,'"'));
-            redoStack.clear();
+            //redoStack.clear();
           } 
         }
 
@@ -107,7 +108,7 @@ public class Editor {
           if (pushUndo)
           {
             undoStack.push(new Action(line, deleted));
-            redoStack.clear();
+            //redoStack.clear();
           }
 
         }  
@@ -120,7 +121,7 @@ public class Editor {
         if (pushUndo)
         {
           undoStack.push(new Action(line,'"'));
-          redoStack.clear();
+          //redoStack.clear();
         }
         break;
       case '>':
@@ -130,12 +131,12 @@ public class Editor {
         if (pushUndo)
         {
           undoStack.push(new Action(line,'"'));
-          redoStack.clear();
+          //redoStack.clear();
         }
         break;
       case 'p':
         txt.print();
-        redoStack.clear();
+        //redoStack.clear();
         break;
       case 'q':
         return false;
@@ -145,8 +146,8 @@ public class Editor {
       case 'c':
         int capacity = Integer.parseInt(line.substring(1));
         undoStack.setCapacity(capacity);
-        redoStack.setCapacity(capacity);
-        redoStack.clear();
+        //redoStack.setCapacity(capacity);
+        //redoStack.clear();
         break; 
       case 'r':
         if(!redo()) showError();
