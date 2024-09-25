@@ -139,6 +139,26 @@ public class NoJunitTest{
     System.out.println("list.size() = " + list.size());
   }
 
+  public void removeAllIndividually(int size)
+  {
+    LinkedList<Integer> list = new LinkedList<Integer>();
+    for(int i = 0; i < size; i++)
+      list.add(i,i);
+    System.out.print("size=" + list.size() + "\t");
+    list.print();
+    Random rand = new Random(0);
+    int numIters = list.size();
+    for(int i = 0; i < numIters; i++)
+    {
+      int ind = rand.nextInt(list.size());
+      list.remove(ind);
+      System.out.print("ind=" + ind + "\t");
+      list.print();
+    }
+    System.out.print("size=" + list.size() + "\t");
+    list.print();
+  }
+
   public void testIter(int size)
   {
     LinkedList<Integer> list = new LinkedList<Integer>();
@@ -156,10 +176,11 @@ public class NoJunitTest{
     //tst.size0addInvalidandValid();
     //tst.size0remove();
     //tst.normalUsage();
-    //tst.removeAll();
-    tst.testIter(0);
-    tst.testIter(1);
-    tst.testIter(15);
+    tst.removeAll();
+    //tst.testIter(0);
+    //tst.testIter(1);
+    //tst.testIter(15);
+    //tst.removeAllIndividually(20);
   }
 
 }

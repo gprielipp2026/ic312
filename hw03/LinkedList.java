@@ -129,7 +129,7 @@ public class LinkedList<T> implements Iterable<T>, List<T> {
   {
     if(cur == null)
       return null;
-    else if(cur.data == element)
+    else if(cur.data.equals(element))
     {
       return removeAll(cur.next, element);
     }
