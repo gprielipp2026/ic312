@@ -12,7 +12,7 @@ public interface AddMax {
    * Required runtime: O(log n)
    */
   void add(double x);
-
+  void print(); // remove after testing
   /** Removes and returns the largest item added so far.
    *
    * @throws NoSuchElementException if there is nothing to remove.

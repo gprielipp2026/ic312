@@ -92,9 +92,15 @@ public class AddMaxTest {
       items[i] = Math.cos(i*.7 + 1);
       items[i+1] = Math.cos(i*.7 + 1.35);
       am.add(items[i]);
+      //System.out.println("add(items[i])");
+      //am.print();
       am.add(items[i+1]);
+      //System.out.println("add(items[i+1])");
+      //am.print();
       java.util.Arrays.sort(items, 0, i+2);
       assertClose(items[i+1], am.removeMax());
+      //System.out.println("after removeMax()");
+      //am.print();
     }
   }
 

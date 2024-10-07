@@ -1,12 +1,8 @@
-JUNIT_JAR = /usr/share/java/junit4.jar
+CMD := $(firstword $(MAKECMDGOALS))
+JUNIT := $(shell find ~/ic312/junit/ -type f -name junit*)
+JUNITCORE := org.junit.runner.JUnitCore
+HAMCREST := $(shell find ~/ic312/junit/ -type f -name hamcrest*)
 
-compile:
-	javac -Xlint:all -cp .:$(JUNIT_JAR) *.java
-
-test: compile
-	java -ea -cp .:$(JUNIT_JAR) org.junit.runner.JUnitCore AddMaxTest
-
-clean:
-	rm -f *.class
-
-.PHONY: compile test clean
+$(CMD):
+	javac -cp .:$(JUNIT):$(HAMCREST) $@.java
+	java -cp	.:$(JUNIT):$(HAMCREST) $(JUNITCORE) $(CMD) 
