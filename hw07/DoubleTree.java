@@ -178,8 +178,8 @@ public class DoubleTree implements AddMax {
 
     cur.update();
     cur = rebalance(cur);
-    cur.update();
-
+    //cur.update();
+    
     return cur;
   }
 
@@ -204,7 +204,7 @@ public class DoubleTree implements AddMax {
         cur.right = rightRotate(cur.right);
       }
       return leftRotate(cur);
-    } 
+    }
     return cur;
   }
 
