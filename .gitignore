@@ -1,4 +1,6 @@
 *.swp
+junit/*
+testJunit/*
 
 # Compiled class file
 *.class
