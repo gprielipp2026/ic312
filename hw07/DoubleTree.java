@@ -136,6 +136,11 @@ public class DoubleTree implements AddMax {
       cur.data = successor.data;
       cur.right = remove(cur.right, successor.data); 
     }
+
+    // I added this after. I think this will handle updating
+    // the tree as it returns back up the callstack
+    cur.update();
+
     return cur;
   }
 
