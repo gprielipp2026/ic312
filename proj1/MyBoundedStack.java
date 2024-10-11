@@ -146,7 +146,7 @@ public class MyBoundedStack<T> implements BoundedStack<T> {
   public void clear()
   {
     //top = bottom;
-    stack = makeStack(capacity);
+    stack = makeStack(capacity); // so this is actually O(n)
     top = bottom = numElements = 0;
   }
 

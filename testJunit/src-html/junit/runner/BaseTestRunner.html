@@ -1,0 +1,392 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    package junit.runner;<a name="line.1"></a>
+<FONT color="green">002</FONT>    <a name="line.2"></a>
+<FONT color="green">003</FONT>    import java.io.BufferedReader;<a name="line.3"></a>
+<FONT color="green">004</FONT>    import java.io.File;<a name="line.4"></a>
+<FONT color="green">005</FONT>    import java.io.FileInputStream;<a name="line.5"></a>
+<FONT color="green">006</FONT>    import java.io.FileOutputStream;<a name="line.6"></a>
+<FONT color="green">007</FONT>    import java.io.IOException;<a name="line.7"></a>
+<FONT color="green">008</FONT>    import java.io.InputStream;<a name="line.8"></a>
+<FONT color="green">009</FONT>    import java.io.PrintWriter;<a name="line.9"></a>
+<FONT color="green">010</FONT>    import java.io.StringReader;<a name="line.10"></a>
+<FONT color="green">011</FONT>    import java.io.StringWriter;<a name="line.11"></a>
+<FONT color="green">012</FONT>    import java.lang.reflect.InvocationTargetException;<a name="line.12"></a>
+<FONT color="green">013</FONT>    import java.lang.reflect.Method;<a name="line.13"></a>
+<FONT color="green">014</FONT>    import java.lang.reflect.Modifier;<a name="line.14"></a>
+<FONT color="green">015</FONT>    import java.text.NumberFormat;<a name="line.15"></a>
+<FONT color="green">016</FONT>    import java.util.Properties;<a name="line.16"></a>
+<FONT color="green">017</FONT>    <a name="line.17"></a>
+<FONT color="green">018</FONT>    import junit.framework.AssertionFailedError;<a name="line.18"></a>
+<FONT color="green">019</FONT>    import junit.framework.Test;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import junit.framework.TestListener;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import junit.framework.TestSuite;<a name="line.21"></a>
+<FONT color="green">022</FONT>    <a name="line.22"></a>
+<FONT color="green">023</FONT>    import org.junit.internal.Throwables;<a name="line.23"></a>
+<FONT color="green">024</FONT>    <a name="line.24"></a>
+<FONT color="green">025</FONT>    /**<a name="line.25"></a>
+<FONT color="green">026</FONT>     * Base class for all test runners.<a name="line.26"></a>
+<FONT color="green">027</FONT>     * This class was born live on stage in Sardinia during XP2000.<a name="line.27"></a>
+<FONT color="green">028</FONT>     */<a name="line.28"></a>
+<FONT color="green">029</FONT>    public abstract class BaseTestRunner implements TestListener {<a name="line.29"></a>
+<FONT color="green">030</FONT>        public static final String SUITE_METHODNAME = "suite";<a name="line.30"></a>
+<FONT color="green">031</FONT>    <a name="line.31"></a>
+<FONT color="green">032</FONT>        private static Properties fPreferences;<a name="line.32"></a>
+<FONT color="green">033</FONT>        static int fgMaxMessageLength = 500;<a name="line.33"></a>
+<FONT color="green">034</FONT>        static boolean fgFilterStack = true;<a name="line.34"></a>
+<FONT color="green">035</FONT>        boolean fLoading = true;<a name="line.35"></a>
+<FONT color="green">036</FONT>    <a name="line.36"></a>
+<FONT color="green">037</FONT>        /*<a name="line.37"></a>
+<FONT color="green">038</FONT>        * Implementation of TestListener<a name="line.38"></a>
+<FONT color="green">039</FONT>        */<a name="line.39"></a>
+<FONT color="green">040</FONT>        public synchronized void startTest(Test test) {<a name="line.40"></a>
+<FONT color="green">041</FONT>            testStarted(test.toString());<a name="line.41"></a>
+<FONT color="green">042</FONT>        }<a name="line.42"></a>
+<FONT color="green">043</FONT>    <a name="line.43"></a>
+<FONT color="green">044</FONT>        protected static void setPreferences(Properties preferences) {<a name="line.44"></a>
+<FONT color="green">045</FONT>            fPreferences = preferences;<a name="line.45"></a>
+<FONT color="green">046</FONT>        }<a name="line.46"></a>
+<FONT color="green">047</FONT>    <a name="line.47"></a>
+<FONT color="green">048</FONT>        protected static Properties getPreferences() {<a name="line.48"></a>
+<FONT color="green">049</FONT>            if (fPreferences == null) {<a name="line.49"></a>
+<FONT color="green">050</FONT>                fPreferences = new Properties();<a name="line.50"></a>
+<FONT color="green">051</FONT>                fPreferences.put("loading", "true");<a name="line.51"></a>
+<FONT color="green">052</FONT>                fPreferences.put("filterstack", "true");<a name="line.52"></a>
+<FONT color="green">053</FONT>                readPreferences();<a name="line.53"></a>
+<FONT color="green">054</FONT>            }<a name="line.54"></a>
+<FONT color="green">055</FONT>            return fPreferences;<a name="line.55"></a>
+<FONT color="green">056</FONT>        }<a name="line.56"></a>
+<FONT color="green">057</FONT>    <a name="line.57"></a>
+<FONT color="green">058</FONT>        public static void savePreferences() throws IOException {<a name="line.58"></a>
+<FONT color="green">059</FONT>            FileOutputStream fos = new FileOutputStream(getPreferencesFile());<a name="line.59"></a>
+<FONT color="green">060</FONT>            try {<a name="line.60"></a>
+<FONT color="green">061</FONT>                getPreferences().store(fos, "");<a name="line.61"></a>
+<FONT color="green">062</FONT>            } finally {<a name="line.62"></a>
+<FONT color="green">063</FONT>                fos.close();<a name="line.63"></a>
+<FONT color="green">064</FONT>            }<a name="line.64"></a>
+<FONT color="green">065</FONT>        }<a name="line.65"></a>
+<FONT color="green">066</FONT>    <a name="line.66"></a>
+<FONT color="green">067</FONT>        public static void setPreference(String key, String value) {<a name="line.67"></a>
+<FONT color="green">068</FONT>            getPreferences().put(key, value);<a name="line.68"></a>
+<FONT color="green">069</FONT>        }<a name="line.69"></a>
+<FONT color="green">070</FONT>    <a name="line.70"></a>
+<FONT color="green">071</FONT>        public synchronized void endTest(Test test) {<a name="line.71"></a>
+<FONT color="green">072</FONT>            testEnded(test.toString());<a name="line.72"></a>
+<FONT color="green">073</FONT>        }<a name="line.73"></a>
+<FONT color="green">074</FONT>    <a name="line.74"></a>
+<FONT color="green">075</FONT>        public synchronized void addError(final Test test, final Throwable e) {<a name="line.75"></a>
+<FONT color="green">076</FONT>            testFailed(TestRunListener.STATUS_ERROR, test, e);<a name="line.76"></a>
+<FONT color="green">077</FONT>        }<a name="line.77"></a>
+<FONT color="green">078</FONT>    <a name="line.78"></a>
+<FONT color="green">079</FONT>        public synchronized void addFailure(final Test test, final AssertionFailedError e) {<a name="line.79"></a>
+<FONT color="green">080</FONT>            testFailed(TestRunListener.STATUS_FAILURE, test, e);<a name="line.80"></a>
+<FONT color="green">081</FONT>        }<a name="line.81"></a>
+<FONT color="green">082</FONT>    <a name="line.82"></a>
+<FONT color="green">083</FONT>        // TestRunListener implementation<a name="line.83"></a>
+<FONT color="green">084</FONT>    <a name="line.84"></a>
+<FONT color="green">085</FONT>        public abstract void testStarted(String testName);<a name="line.85"></a>
+<FONT color="green">086</FONT>    <a name="line.86"></a>
+<FONT color="green">087</FONT>        public abstract void testEnded(String testName);<a name="line.87"></a>
+<FONT color="green">088</FONT>    <a name="line.88"></a>
+<FONT color="green">089</FONT>        public abstract void testFailed(int status, Test test, Throwable e);<a name="line.89"></a>
+<FONT color="green">090</FONT>    <a name="line.90"></a>
+<FONT color="green">091</FONT>        /**<a name="line.91"></a>
+<FONT color="green">092</FONT>         * Returns the Test corresponding to the given suite. This is<a name="line.92"></a>
+<FONT color="green">093</FONT>         * a template method, subclasses override runFailed(), clearStatus().<a name="line.93"></a>
+<FONT color="green">094</FONT>         */<a name="line.94"></a>
+<FONT color="green">095</FONT>        public Test getTest(String suiteClassName) {<a name="line.95"></a>
+<FONT color="green">096</FONT>            if (suiteClassName.length() &lt;= 0) {<a name="line.96"></a>
+<FONT color="green">097</FONT>                clearStatus();<a name="line.97"></a>
+<FONT color="green">098</FONT>                return null;<a name="line.98"></a>
+<FONT color="green">099</FONT>            }<a name="line.99"></a>
+<FONT color="green">100</FONT>            Class&lt;?&gt; testClass = null;<a name="line.100"></a>
+<FONT color="green">101</FONT>            try {<a name="line.101"></a>
+<FONT color="green">102</FONT>                testClass = loadSuiteClass(suiteClassName);<a name="line.102"></a>
+<FONT color="green">103</FONT>            } catch (ClassNotFoundException e) {<a name="line.103"></a>
+<FONT color="green">104</FONT>                String clazz = e.getMessage();<a name="line.104"></a>
+<FONT color="green">105</FONT>                if (clazz == null) {<a name="line.105"></a>
+<FONT color="green">106</FONT>                    clazz = suiteClassName;<a name="line.106"></a>
+<FONT color="green">107</FONT>                }<a name="line.107"></a>
+<FONT color="green">108</FONT>                runFailed("Class not found \"" + clazz + "\"");<a name="line.108"></a>
+<FONT color="green">109</FONT>                return null;<a name="line.109"></a>
+<FONT color="green">110</FONT>            } catch (Exception e) {<a name="line.110"></a>
+<FONT color="green">111</FONT>                runFailed("Error: " + e.toString());<a name="line.111"></a>
+<FONT color="green">112</FONT>                return null;<a name="line.112"></a>
+<FONT color="green">113</FONT>            }<a name="line.113"></a>
+<FONT color="green">114</FONT>            Method suiteMethod = null;<a name="line.114"></a>
+<FONT color="green">115</FONT>            try {<a name="line.115"></a>
+<FONT color="green">116</FONT>                suiteMethod = testClass.getMethod(SUITE_METHODNAME);<a name="line.116"></a>
+<FONT color="green">117</FONT>            } catch (Exception e) {<a name="line.117"></a>
+<FONT color="green">118</FONT>                // try to extract a test suite automatically<a name="line.118"></a>
+<FONT color="green">119</FONT>                clearStatus();<a name="line.119"></a>
+<FONT color="green">120</FONT>                return new TestSuite(testClass);<a name="line.120"></a>
+<FONT color="green">121</FONT>            }<a name="line.121"></a>
+<FONT color="green">122</FONT>            if (!Modifier.isStatic(suiteMethod.getModifiers())) {<a name="line.122"></a>
+<FONT color="green">123</FONT>                runFailed("Suite() method must be static");<a name="line.123"></a>
+<FONT color="green">124</FONT>                return null;<a name="line.124"></a>
+<FONT color="green">125</FONT>            }<a name="line.125"></a>
+<FONT color="green">126</FONT>            Test test = null;<a name="line.126"></a>
+<FONT color="green">127</FONT>            try {<a name="line.127"></a>
+<FONT color="green">128</FONT>                test = (Test) suiteMethod.invoke(null); // static method<a name="line.128"></a>
+<FONT color="green">129</FONT>                if (test == null) {<a name="line.129"></a>
+<FONT color="green">130</FONT>                    return test;<a name="line.130"></a>
+<FONT color="green">131</FONT>                }<a name="line.131"></a>
+<FONT color="green">132</FONT>            } catch (InvocationTargetException e) {<a name="line.132"></a>
+<FONT color="green">133</FONT>                runFailed("Failed to invoke suite():" + e.getTargetException().toString());<a name="line.133"></a>
+<FONT color="green">134</FONT>                return null;<a name="line.134"></a>
+<FONT color="green">135</FONT>            } catch (IllegalAccessException e) {<a name="line.135"></a>
+<FONT color="green">136</FONT>                runFailed("Failed to invoke suite():" + e.toString());<a name="line.136"></a>
+<FONT color="green">137</FONT>                return null;<a name="line.137"></a>
+<FONT color="green">138</FONT>            }<a name="line.138"></a>
+<FONT color="green">139</FONT>    <a name="line.139"></a>
+<FONT color="green">140</FONT>            clearStatus();<a name="line.140"></a>
+<FONT color="green">141</FONT>            return test;<a name="line.141"></a>
+<FONT color="green">142</FONT>        }<a name="line.142"></a>
+<FONT color="green">143</FONT>    <a name="line.143"></a>
+<FONT color="green">144</FONT>        /**<a name="line.144"></a>
+<FONT color="green">145</FONT>         * Returns the formatted string of the elapsed time.<a name="line.145"></a>
+<FONT color="green">146</FONT>         */<a name="line.146"></a>
+<FONT color="green">147</FONT>        public String elapsedTimeAsString(long runTime) {<a name="line.147"></a>
+<FONT color="green">148</FONT>            return NumberFormat.getInstance().format((double) runTime / 1000);<a name="line.148"></a>
+<FONT color="green">149</FONT>        }<a name="line.149"></a>
+<FONT color="green">150</FONT>    <a name="line.150"></a>
+<FONT color="green">151</FONT>        /**<a name="line.151"></a>
+<FONT color="green">152</FONT>         * Processes the command line arguments and<a name="line.152"></a>
+<FONT color="green">153</FONT>         * returns the name of the suite class to run or null<a name="line.153"></a>
+<FONT color="green">154</FONT>         */<a name="line.154"></a>
+<FONT color="green">155</FONT>        protected String processArguments(String[] args) {<a name="line.155"></a>
+<FONT color="green">156</FONT>            String suiteName = null;<a name="line.156"></a>
+<FONT color="green">157</FONT>            for (int i = 0; i &lt; args.length; i++) {<a name="line.157"></a>
+<FONT color="green">158</FONT>                if (args[i].equals("-noloading")) {<a name="line.158"></a>
+<FONT color="green">159</FONT>                    setLoading(false);<a name="line.159"></a>
+<FONT color="green">160</FONT>                } else if (args[i].equals("-nofilterstack")) {<a name="line.160"></a>
+<FONT color="green">161</FONT>                    fgFilterStack = false;<a name="line.161"></a>
+<FONT color="green">162</FONT>                } else if (args[i].equals("-c")) {<a name="line.162"></a>
+<FONT color="green">163</FONT>                    if (args.length &gt; i + 1) {<a name="line.163"></a>
+<FONT color="green">164</FONT>                        suiteName = extractClassName(args[i + 1]);<a name="line.164"></a>
+<FONT color="green">165</FONT>                    } else {<a name="line.165"></a>
+<FONT color="green">166</FONT>                        System.out.println("Missing Test class name");<a name="line.166"></a>
+<FONT color="green">167</FONT>                    }<a name="line.167"></a>
+<FONT color="green">168</FONT>                    i++;<a name="line.168"></a>
+<FONT color="green">169</FONT>                } else {<a name="line.169"></a>
+<FONT color="green">170</FONT>                    suiteName = args[i];<a name="line.170"></a>
+<FONT color="green">171</FONT>                }<a name="line.171"></a>
+<FONT color="green">172</FONT>            }<a name="line.172"></a>
+<FONT color="green">173</FONT>            return suiteName;<a name="line.173"></a>
+<FONT color="green">174</FONT>        }<a name="line.174"></a>
+<FONT color="green">175</FONT>    <a name="line.175"></a>
+<FONT color="green">176</FONT>        /**<a name="line.176"></a>
+<FONT color="green">177</FONT>         * Sets the loading behaviour of the test runner<a name="line.177"></a>
+<FONT color="green">178</FONT>         */<a name="line.178"></a>
+<FONT color="green">179</FONT>        public void setLoading(boolean enable) {<a name="line.179"></a>
+<FONT color="green">180</FONT>            fLoading = enable;<a name="line.180"></a>
+<FONT color="green">181</FONT>        }<a name="line.181"></a>
+<FONT color="green">182</FONT>    <a name="line.182"></a>
+<FONT color="green">183</FONT>        /**<a name="line.183"></a>
+<FONT color="green">184</FONT>         * Extract the class name from a String in VA/Java style<a name="line.184"></a>
+<FONT color="green">185</FONT>         */<a name="line.185"></a>
+<FONT color="green">186</FONT>        public String extractClassName(String className) {<a name="line.186"></a>
+<FONT color="green">187</FONT>            if (className.startsWith("Default package for")) {<a name="line.187"></a>
+<FONT color="green">188</FONT>                return className.substring(className.lastIndexOf(".") + 1);<a name="line.188"></a>
+<FONT color="green">189</FONT>            }<a name="line.189"></a>
+<FONT color="green">190</FONT>            return className;<a name="line.190"></a>
+<FONT color="green">191</FONT>        }<a name="line.191"></a>
+<FONT color="green">192</FONT>    <a name="line.192"></a>
+<FONT color="green">193</FONT>        /**<a name="line.193"></a>
+<FONT color="green">194</FONT>         * Truncates a String to the maximum length.<a name="line.194"></a>
+<FONT color="green">195</FONT>         */<a name="line.195"></a>
+<FONT color="green">196</FONT>        public static String truncate(String s) {<a name="line.196"></a>
+<FONT color="green">197</FONT>            if (fgMaxMessageLength != -1 &amp;&amp; s.length() &gt; fgMaxMessageLength) {<a name="line.197"></a>
+<FONT color="green">198</FONT>                s = s.substring(0, fgMaxMessageLength) + "...";<a name="line.198"></a>
+<FONT color="green">199</FONT>            }<a name="line.199"></a>
+<FONT color="green">200</FONT>            return s;<a name="line.200"></a>
+<FONT color="green">201</FONT>        }<a name="line.201"></a>
+<FONT color="green">202</FONT>    <a name="line.202"></a>
+<FONT color="green">203</FONT>        /**<a name="line.203"></a>
+<FONT color="green">204</FONT>         * Override to define how to handle a failed loading of<a name="line.204"></a>
+<FONT color="green">205</FONT>         * a test suite.<a name="line.205"></a>
+<FONT color="green">206</FONT>         */<a name="line.206"></a>
+<FONT color="green">207</FONT>        protected abstract void runFailed(String message);<a name="line.207"></a>
+<FONT color="green">208</FONT>    <a name="line.208"></a>
+<FONT color="green">209</FONT>        /**<a name="line.209"></a>
+<FONT color="green">210</FONT>         * Returns the loaded Class for a suite name.<a name="line.210"></a>
+<FONT color="green">211</FONT>         */<a name="line.211"></a>
+<FONT color="green">212</FONT>        protected Class&lt;?&gt; loadSuiteClass(String suiteClassName) throws ClassNotFoundException {<a name="line.212"></a>
+<FONT color="green">213</FONT>            return Class.forName(suiteClassName);<a name="line.213"></a>
+<FONT color="green">214</FONT>        }<a name="line.214"></a>
+<FONT color="green">215</FONT>    <a name="line.215"></a>
+<FONT color="green">216</FONT>        /**<a name="line.216"></a>
+<FONT color="green">217</FONT>         * Clears the status message.<a name="line.217"></a>
+<FONT color="green">218</FONT>         */<a name="line.218"></a>
+<FONT color="green">219</FONT>        protected void clearStatus() { // Belongs in the GUI TestRunner class<a name="line.219"></a>
+<FONT color="green">220</FONT>        }<a name="line.220"></a>
+<FONT color="green">221</FONT>    <a name="line.221"></a>
+<FONT color="green">222</FONT>        protected boolean useReloadingTestSuiteLoader() {<a name="line.222"></a>
+<FONT color="green">223</FONT>            return getPreference("loading").equals("true") &amp;&amp; fLoading;<a name="line.223"></a>
+<FONT color="green">224</FONT>        }<a name="line.224"></a>
+<FONT color="green">225</FONT>    <a name="line.225"></a>
+<FONT color="green">226</FONT>        private static File getPreferencesFile() {<a name="line.226"></a>
+<FONT color="green">227</FONT>            String home = System.getProperty("user.home");<a name="line.227"></a>
+<FONT color="green">228</FONT>            return new File(home, "junit.properties");<a name="line.228"></a>
+<FONT color="green">229</FONT>        }<a name="line.229"></a>
+<FONT color="green">230</FONT>    <a name="line.230"></a>
+<FONT color="green">231</FONT>        private static void readPreferences() {<a name="line.231"></a>
+<FONT color="green">232</FONT>            InputStream is = null;<a name="line.232"></a>
+<FONT color="green">233</FONT>            try {<a name="line.233"></a>
+<FONT color="green">234</FONT>                is = new FileInputStream(getPreferencesFile());<a name="line.234"></a>
+<FONT color="green">235</FONT>                setPreferences(new Properties(getPreferences()));<a name="line.235"></a>
+<FONT color="green">236</FONT>                getPreferences().load(is);<a name="line.236"></a>
+<FONT color="green">237</FONT>            } catch (IOException ignored) {<a name="line.237"></a>
+<FONT color="green">238</FONT>            } catch (SecurityException ignored) {<a name="line.238"></a>
+<FONT color="green">239</FONT>            } finally {<a name="line.239"></a>
+<FONT color="green">240</FONT>                try {<a name="line.240"></a>
+<FONT color="green">241</FONT>                    if (is != null) {<a name="line.241"></a>
+<FONT color="green">242</FONT>                        is.close();<a name="line.242"></a>
+<FONT color="green">243</FONT>                    }<a name="line.243"></a>
+<FONT color="green">244</FONT>                } catch (IOException e1) {<a name="line.244"></a>
+<FONT color="green">245</FONT>                }<a name="line.245"></a>
+<FONT color="green">246</FONT>            }<a name="line.246"></a>
+<FONT color="green">247</FONT>        }<a name="line.247"></a>
+<FONT color="green">248</FONT>    <a name="line.248"></a>
+<FONT color="green">249</FONT>        public static String getPreference(String key) {<a name="line.249"></a>
+<FONT color="green">250</FONT>            return getPreferences().getProperty(key);<a name="line.250"></a>
+<FONT color="green">251</FONT>        }<a name="line.251"></a>
+<FONT color="green">252</FONT>    <a name="line.252"></a>
+<FONT color="green">253</FONT>        public static int getPreference(String key, int dflt) {<a name="line.253"></a>
+<FONT color="green">254</FONT>            String value = getPreference(key);<a name="line.254"></a>
+<FONT color="green">255</FONT>            int intValue = dflt;<a name="line.255"></a>
+<FONT color="green">256</FONT>            if (value == null) {<a name="line.256"></a>
+<FONT color="green">257</FONT>                return intValue;<a name="line.257"></a>
+<FONT color="green">258</FONT>            }<a name="line.258"></a>
+<FONT color="green">259</FONT>            try {<a name="line.259"></a>
+<FONT color="green">260</FONT>                intValue = Integer.parseInt(value);<a name="line.260"></a>
+<FONT color="green">261</FONT>            } catch (NumberFormatException ne) {<a name="line.261"></a>
+<FONT color="green">262</FONT>            }<a name="line.262"></a>
+<FONT color="green">263</FONT>            return intValue;<a name="line.263"></a>
+<FONT color="green">264</FONT>        }<a name="line.264"></a>
+<FONT color="green">265</FONT>    <a name="line.265"></a>
+<FONT color="green">266</FONT>        /**<a name="line.266"></a>
+<FONT color="green">267</FONT>         * Returns a filtered stack trace<a name="line.267"></a>
+<FONT color="green">268</FONT>         */<a name="line.268"></a>
+<FONT color="green">269</FONT>        public static String getFilteredTrace(Throwable e) {<a name="line.269"></a>
+<FONT color="green">270</FONT>            return BaseTestRunner.getFilteredTrace(Throwables.getStacktrace(e));<a name="line.270"></a>
+<FONT color="green">271</FONT>        }<a name="line.271"></a>
+<FONT color="green">272</FONT>    <a name="line.272"></a>
+<FONT color="green">273</FONT>        /**<a name="line.273"></a>
+<FONT color="green">274</FONT>         * Filters stack frames from internal JUnit classes<a name="line.274"></a>
+<FONT color="green">275</FONT>         */<a name="line.275"></a>
+<FONT color="green">276</FONT>        public static String getFilteredTrace(String stack) {<a name="line.276"></a>
+<FONT color="green">277</FONT>            if (showStackRaw()) {<a name="line.277"></a>
+<FONT color="green">278</FONT>                return stack;<a name="line.278"></a>
+<FONT color="green">279</FONT>            }<a name="line.279"></a>
+<FONT color="green">280</FONT>    <a name="line.280"></a>
+<FONT color="green">281</FONT>            StringWriter sw = new StringWriter();<a name="line.281"></a>
+<FONT color="green">282</FONT>            PrintWriter pw = new PrintWriter(sw);<a name="line.282"></a>
+<FONT color="green">283</FONT>            StringReader sr = new StringReader(stack);<a name="line.283"></a>
+<FONT color="green">284</FONT>            BufferedReader br = new BufferedReader(sr);<a name="line.284"></a>
+<FONT color="green">285</FONT>    <a name="line.285"></a>
+<FONT color="green">286</FONT>            String line;<a name="line.286"></a>
+<FONT color="green">287</FONT>            try {<a name="line.287"></a>
+<FONT color="green">288</FONT>                while ((line = br.readLine()) != null) {<a name="line.288"></a>
+<FONT color="green">289</FONT>                    if (!filterLine(line)) {<a name="line.289"></a>
+<FONT color="green">290</FONT>                        pw.println(line);<a name="line.290"></a>
+<FONT color="green">291</FONT>                    }<a name="line.291"></a>
+<FONT color="green">292</FONT>                }<a name="line.292"></a>
+<FONT color="green">293</FONT>            } catch (Exception IOException) {<a name="line.293"></a>
+<FONT color="green">294</FONT>                return stack; // return the stack unfiltered<a name="line.294"></a>
+<FONT color="green">295</FONT>            }<a name="line.295"></a>
+<FONT color="green">296</FONT>            return sw.toString();<a name="line.296"></a>
+<FONT color="green">297</FONT>        }<a name="line.297"></a>
+<FONT color="green">298</FONT>    <a name="line.298"></a>
+<FONT color="green">299</FONT>        protected static boolean showStackRaw() {<a name="line.299"></a>
+<FONT color="green">300</FONT>            return !getPreference("filterstack").equals("true") || fgFilterStack == false;<a name="line.300"></a>
+<FONT color="green">301</FONT>        }<a name="line.301"></a>
+<FONT color="green">302</FONT>    <a name="line.302"></a>
+<FONT color="green">303</FONT>        static boolean filterLine(String line) {<a name="line.303"></a>
+<FONT color="green">304</FONT>            String[] patterns = new String[]{<a name="line.304"></a>
+<FONT color="green">305</FONT>                    "junit.framework.TestCase",<a name="line.305"></a>
+<FONT color="green">306</FONT>                    "junit.framework.TestResult",<a name="line.306"></a>
+<FONT color="green">307</FONT>                    "junit.framework.TestSuite",<a name="line.307"></a>
+<FONT color="green">308</FONT>                    "junit.framework.Assert.", // don't filter AssertionFailure<a name="line.308"></a>
+<FONT color="green">309</FONT>                    "junit.swingui.TestRunner",<a name="line.309"></a>
+<FONT color="green">310</FONT>                    "junit.awtui.TestRunner",<a name="line.310"></a>
+<FONT color="green">311</FONT>                    "junit.textui.TestRunner",<a name="line.311"></a>
+<FONT color="green">312</FONT>                    "java.lang.reflect.Method.invoke("<a name="line.312"></a>
+<FONT color="green">313</FONT>            };<a name="line.313"></a>
+<FONT color="green">314</FONT>            for (int i = 0; i &lt; patterns.length; i++) {<a name="line.314"></a>
+<FONT color="green">315</FONT>                if (line.indexOf(patterns[i]) &gt; 0) {<a name="line.315"></a>
+<FONT color="green">316</FONT>                    return true;<a name="line.316"></a>
+<FONT color="green">317</FONT>                }<a name="line.317"></a>
+<FONT color="green">318</FONT>            }<a name="line.318"></a>
+<FONT color="green">319</FONT>            return false;<a name="line.319"></a>
+<FONT color="green">320</FONT>        }<a name="line.320"></a>
+<FONT color="green">321</FONT>    <a name="line.321"></a>
+<FONT color="green">322</FONT>        static {<a name="line.322"></a>
+<FONT color="green">323</FONT>            fgMaxMessageLength = getPreference("maxmessage", fgMaxMessageLength);<a name="line.323"></a>
+<FONT color="green">324</FONT>        }<a name="line.324"></a>
+<FONT color="green">325</FONT>    <a name="line.325"></a>
+<FONT color="green">326</FONT>    }<a name="line.326"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

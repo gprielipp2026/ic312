@@ -69,6 +69,26 @@ public class BSTMap<K extends Comparable<K>, V> implements Map<K,V> {
     return get(key) != null; // unless storing null then I need to rework this
   }
 
+  private boolean containsKey(Node cur, K key)
+  {
+    if(cur == null) return false;
+    else if (cur.compareTo(key) < 0) {
+      // cur < key 
+      return containsKey(cur.right, key);
+    }
+    else if (cur.compareTo(key) > 0) {
+      // cur > key
+      return containsKey(cur.left, key);
+    }
+    else if (cur.compareTo(key) == 0)
+    {
+      // cur == key
+      return true;
+    }
+    return false;
+
+  }
+
   @Override
   public void put(K key, V value) {
     // requirement: O(height)
@@ -168,7 +188,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map<K,V> {
       // 2 children 
       Node successor = getSuccessor(cur.right);
       cur.data = successor.data;
-      remove(cur.right, successor.data.getKey()); 
+      cur.right = remove(cur.right, successor.data.getKey()); 
     }
     return cur;
   }
@@ -179,15 +199,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map<K,V> {
   private Node getSuccessor(Node cur)
   {
     if(cur == null) return null;
-    if(cur.left == null && cur.right == null) return cur;
-
-    if(cur.left == null)
-    {
-      return getSuccessor(cur.right); 
-    }
-    else
-    {
-      return getSuccessor(cur.left);
-    }
+    if(cur.left == null) return cur;
+    else return getSuccessor(cur.left);
   }
 }

@@ -6,7 +6,6 @@ import java.util.*;
 
 public class TestMap
 {
-
   private static <K extends Comparable<K>, V> void printMap(BSTMap<K, V> map)
   {
     Deque<K> keys = map.traverse();
