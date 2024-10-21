@@ -93,7 +93,7 @@ public class TopK<T extends Comparable<T>> {
     }
     
     int index;
-    while(i < heap.length/2)
+    while(i < k/2)
     {
       int li = 2 * i + 1;
       int ri = 2 * i + 2;
