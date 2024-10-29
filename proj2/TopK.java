@@ -23,7 +23,7 @@ public class TopK<T extends Comparable<T>> {
     this.k = k;
     // Stack Overflow helped me get this line to create the new heap
     @SuppressWarnings("unchecked")
-    final T[] e = (T[])new Comparable[k + 1]; 
+    final T[] e = (T[])new Comparable[k]; 
     this.heap = e;
   }
 
@@ -34,13 +34,35 @@ public class TopK<T extends Comparable<T>> {
     if (calledGetTop)
       throw new IllegalStateException("Can't make any other calls after the first call to getTop().");
     // insert at the bottom of the heap 
-    heap[numElems] = element;
-    if(numElems <= k) numElems++;
-    heapify(heap);
+   
+    if(k == 0) return;
 
-    if(numElems > k) 
+    //heap[numElems] = element;
+    //if(numElems <= k) numElems++;
+    //heapify(heap);
+
+    if(numElems == k && heap[0].compareTo(element) < 0) 
     {
-      removeMin();
+      // if new element is greater than current min,
+      // swap them and resort the array
+      heap[0] = element;
+      bubbledown(heap, 0);
+    }
+    else if(numElems < k)
+    {
+      //System.out.println("k = " + k + "\tnumElems = " + numElems);
+      // have not filled the heap yet
+      heap[numElems] = element;
+      bubbleup(heap, numElems); 
+      numElems++;
+    }
+    else
+    {
+      // heap is full and element is less than current min
+      // do nothing
+      //removeMin();
+      //heap[numElems++] = element;
+      //heapify(heap);
     }
   }
 
@@ -97,8 +119,9 @@ public class TopK<T extends Comparable<T>> {
     {
       int li = 2 * i + 1;
       int ri = 2 * i + 2;
-      if((li > heap.length || arr[li] == null) && ( ri > heap.length || arr[ri] == null)) break; // both children are null
-      if(ri < heap.length && arr[ri] != null && arr[li].compareTo(arr[ri]) > 0)
+      if(li >= numElems) break;
+      //if((li >= heap.length || arr[li] == null) && ( ri >= heap.length || arr[ri] == null)) break; // both children are null
+      if(ri < numElems && arr[li].compareTo(arr[ri]) > 0)
         index = ri; // then ri is smallest child
       else
         index = li; // otherwise li is smallest child
@@ -109,6 +132,24 @@ public class TopK<T extends Comparable<T>> {
       i = index;
     }    
     arr[i] = item;
+  }
+
+  /**
+   * bubbles an element up from a given index
+   */
+  private void bubbleup(T arr[], int i)
+  {
+    while(i > 0)
+    {
+      int parent = (i - 1) / 2;
+      if(arr[i].compareTo(arr[parent]) < 0)
+      {
+        T tmp = arr[parent];
+        arr[parent] = arr[i];
+        arr[i] = tmp;
+      }
+      i = parent;
+    }
   }
 
   /**

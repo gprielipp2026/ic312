@@ -5,7 +5,7 @@
  * The k zipcodes with the highest pills/population ratios should be
  * printed out.
  */
-public class Zips {
+public class FastZips {
   /**
    * I might be able to make the reading of data from the TSV faster by having making a new "TSV" Reader
    * that puts stuff directly into a "CityInfo" class. Then accesses of what was previously the map
@@ -103,7 +103,7 @@ public class Zips {
 
     // lets parse out the zipsLines first
     TsvReader zipsLines  = new TsvReader(zipsFile);
-    Map<Integer, CityInfo> zipToCity = new TreeMap<>();
+    Map<Integer, CityInfo> zipToCity = new RBTreeMap<>();
 
     for(Map<String, String> line : zipsLines)
     {
@@ -116,12 +116,13 @@ public class Zips {
       }
       else
       {
-        zipToCity.put(zipcode, new Zips.CityInfo(zipcode,
+        zipToCity.put(zipcode, new FastZips.CityInfo(zipcode,
               line.get("city"),
               line.get("state_id"),
               population));
       }
     }
+
     // now zipToCity contains zipcode: CityInfo[...]
 
     /**
@@ -139,7 +140,7 @@ public class Zips {
     // I want to pull BUYER_ZIP and DOSAGE_UNIT
     // time to process amount of pills total per zipcode
     TsvReader pillsLines = new TsvReader(pillsFile);
-    Map<Integer, Integer> zipToPillCount = new TreeMap<>();
+    Map<Integer, Integer> zipToPillCount = new RBTreeMap<>();
 
     for(Map<String,String> line : pillsLines)
     {
@@ -159,7 +160,7 @@ public class Zips {
       int population = city.getPopulation();
       int pillCount  = zipToPillCount.get(zipcode);
       double perCapita = ((double)pillCount)/((double)population);
-      topK.add(new Zips.PerCapita(perCapita, city));
+      topK.add(new FastZips.PerCapita(perCapita, city));
     }
 
     // display the top k
@@ -169,3 +170,4 @@ public class Zips {
     } 
   }
 }
+

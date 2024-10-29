@@ -17,8 +17,8 @@ public class TopKSanityTest {
     //tt.print();
     List<String> top = tt.getTop();
     //for(String x : top)
-      //System.out.print(x + " ");
-      //System.out.println();
+    //System.out.print(x + " ");
+    //System.out.println();
     assertEquals(3, top.size());
     assertEquals("what", top.get(0));
     assertEquals("what", top.get(1));
