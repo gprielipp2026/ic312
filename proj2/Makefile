@@ -8,6 +8,12 @@ compile:
 
 test: test1 test2 test3 test4 edgecases
 
+testFastReader:
+	javac FastReader.java
+	javac -cp .:$(JUNIT):$(HAMCREST) FastReaderTest.java
+	java -cp	.:$(JUNIT):$(HAMCREST) $(JUNITCORE) FastReaderTest 
+
+
 test1: 
 	javac TreeMap.java
 	javac -cp .:$(JUNIT):$(HAMCREST) TreeMapSanityTest.java

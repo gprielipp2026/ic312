@@ -184,7 +184,6 @@ public class TopK<T extends Comparable<T>> {
     calledGetTop = true;
     // TODO you must change everything below to use a heap instead!
     // The current method of repeatedly removing the max is too inefficient.
-    List<T> largest = new ArrayList<>();
     //while (!elements.isEmpty() && largest.size() < k) {
     //int maxInd = 0;
     //for (int i = 0; i < elements.size(); ++i) {
@@ -198,14 +197,25 @@ public class TopK<T extends Comparable<T>> {
 
     // now O(k) - is this the best I can do?    
     int min = (k < numElems ? k:numElems);
+    //System.out.println("min = " + min);
+    List<T> largest = new ArrayList<>(min);
+    //System.out.println(".size() = " + largest.size());
     for(int i = 0; i < min; i++)
     {
-      largest.add(removeMin()); // O(1) ammortized
+      largest.add(removeMin()); 
     }
-  
-    // O(k)
+    // 
+    //// O(k)
     java.util.Collections.reverse(largest);
-   
+  
+    // sort the heap in place
+    //for(int i = 0; i < numElems; i++)
+    //{
+    //
+    //}
+    // 
+    //List<T> largest = new ArrayList<>(Arrays.asList(sorted));
+
     return largest;
   }
 }

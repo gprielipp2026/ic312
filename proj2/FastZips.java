@@ -5,6 +5,11 @@
  * The k zipcodes with the highest pills/population ratios should be
  * printed out.
  */
+//import java.util.TreeMap;
+
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 public class FastZips {
   /**
    * I might be able to make the reading of data from the TSV faster by having making a new "TSV" Reader
@@ -103,8 +108,8 @@ public class FastZips {
 
     // lets parse out the zipsLines first
     TsvReader zipsLines  = new TsvReader(zipsFile);
-    Map<Integer, CityInfo> zipToCity = new RBTreeMap<>();
-
+    //TreeMap<Integer, CityInfo> zipToCity = new TreeMap<>(); // java.util
+    HashMap<Integer, CityInfo> zipToCity = new HashMap<>(); 
     for(Map<String, String> line : zipsLines)
     {
       Integer zipcode = Integer.parseInt(line.get("zip"));
@@ -140,7 +145,8 @@ public class FastZips {
     // I want to pull BUYER_ZIP and DOSAGE_UNIT
     // time to process amount of pills total per zipcode
     TsvReader pillsLines = new TsvReader(pillsFile);
-    Map<Integer, Integer> zipToPillCount = new RBTreeMap<>();
+    //TreeMap<Integer, Integer> zipToPillCount = new TreeMap<>(); // java.util
+    HashMap<Integer, Integer> zipToPillCount = new HashMap<>();
 
     for(Map<String,String> line : pillsLines)
     {
@@ -154,11 +160,13 @@ public class FastZips {
 
     // now time to correlate the values
     TopK<PerCapita> topK = new TopK<>(k);
-    for(Integer zipcode : zipToPillCount.keys())
+    for(Entry<Integer, Integer> zipNcount: zipToPillCount.entrySet()) // java.util
+    //for(Integer zipcode : zipToPillCount.keys())
     {
+      Integer zipcode = zipNcount.getKey();
       CityInfo city = zipToCity.get(zipcode);
       int population = city.getPopulation();
-      int pillCount  = zipToPillCount.get(zipcode);
+      int pillCount  = zipNcount.getValue(); //zipToPillCount.get(zipcode);
       double perCapita = ((double)pillCount)/((double)population);
       topK.add(new FastZips.PerCapita(perCapita, city));
     }

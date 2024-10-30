@@ -23,7 +23,7 @@ public class RBTreeMap<K extends Comparable<K>, V> implements Map<K,V>
     private Node left = null;
     private Node right = null;
     private boolean isRed = true;
-    
+
     public Node(Node parent, K key, V value)
     {
       this.parent = parent;
@@ -123,7 +123,7 @@ public class RBTreeMap<K extends Comparable<K>, V> implements Map<K,V>
   { 
     Deque<Node> nodes = new LinkedList<Node>();
     nodes.add(root);    
-   
+
     while(!nodes.isEmpty())
     {
       Node cur = nodes.removeFirst();
@@ -138,62 +138,63 @@ public class RBTreeMap<K extends Comparable<K>, V> implements Map<K,V>
   /**
    * Follows Red-Black tree rules
    * for fixing the tree
+   * translation of java.util.TreeMap
    */
-  private void fixViolations(Node root)
+  private void fixViolations(Node cur)
   {
-    Node parent = root.parent;
+    cur.isRed = true;
 
-    if(parent == null || !parent.isRed)
+    while(cur != null && cur != root && cur.parent.isRed)
     {
-      // root node, (nothing to do)
-      // OR root is red
-      // force root to be black
-      root.isRed = false;
-      return;
-    }  
-
-    // parent is red
-    Node grandparent = parent.parent;
-    
-    // retrieve the uncle
-    Node uncle;
-    if(parent == grandparent.left)
-      uncle = grandparent.right;
-    else
-      uncle = grandparent.left; 
-    
-    // if uncle is red
-    if(uncle != null && uncle.isRed)
-    {
-      parent.isRed = false;
-      uncle.isRed = false;
-      grandparent.isRed = true;
-    
-      fixViolations(grandparent);
-    }
-    else if (parent == grandparent.left)
-    {
-      if(root == parent.right)
+      Node parent = cur.parent;
+      Node grandparent = parent.parent;
+      if(parent == grandparent.left)
       {
-        leftRotate(parent);
-        parent = root;
+        Node uncle = grandparent.right;
+        if(uncle != null && uncle.isRed)
+        {
+          parent.isRed = false;
+          uncle.isRed = false;
+          grandparent.isRed = true;
+          cur = grandparent;
+        } 
+        else
+        {
+          if ( cur == parent.right ) 
+          {
+            cur = parent;
+            leftRotate(cur);
+          }
+          cur.parent.isRed = false;
+          cur.parent.parent.isRed = true;
+          rightRotate(cur.parent.parent);
+        }
       }
-      rightRotate(grandparent);
-      parent.isRed = false;
-      grandparent.isRed = true;
-    }
-    else
-    {
-      if(root == parent.left)
+      else
       {
-        rightRotate(parent);
-        parent = root;
+        Node uncle = grandparent.left;
+        if(uncle != null && uncle.isRed)
+        {
+          parent.isRed = false;
+          uncle.isRed = false;
+          grandparent.isRed = true;
+          cur = grandparent;
+        }
+        else
+        {
+          if(cur == parent.left)
+          {
+            cur = parent;
+            rightRotate(cur);
+          }
+          cur.parent.isRed = false;
+          cur.parent.parent.isRed = true;
+          leftRotate(cur.parent.parent);
+        }
       }
 
-      leftRotate(grandparent);
-      parent.isRed = false;
-      grandparent.isRed = true;
-    }
+    }   
+    root.isRed = false;    
   }
 
   /**

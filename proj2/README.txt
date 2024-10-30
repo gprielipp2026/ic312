@@ -27,6 +27,10 @@ What part or aspect of this project was the most challenging?
 Trying to optimize my code to make it more efficient.
 
 Explain what you did for the bonus (if anything):
+I improved how my TopK heap worked. 
+I made a TreeMap using a Red-Black tree, but I struggled with the 
+rules for fixing violations and resulted in looking up 
+the Java source code and only translating the "fixAfterInsertion"
 
 
 What part or aspect of this project was the most tedious or
