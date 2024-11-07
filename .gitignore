@@ -2,6 +2,10 @@
 junit/*
 testJunit/*
 
+# proj2 big files
+proj2/*.tsv
+proj2/*.txt
+
 # Compiled class file
 *.class
 

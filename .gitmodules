@@ -1,0 +1,3 @@
+[submodule "ropes"]
+	path = ropes
+	url = git@github.com:gprielipp2026/ropes.git
