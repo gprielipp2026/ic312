@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class MyGraph implements Graph
 {
@@ -54,7 +55,7 @@ public class MyGraph implements Graph
 
     int srcInd = vertices.get(source);
     int dstInd = vertices.get(dest);
-    
+
     return edges.get(srcInd).get(dstInd);
   }
 
@@ -64,17 +65,13 @@ public class MyGraph implements Graph
   public void addVertex(String label)
   {
     // no need to do anything new
-    if(vertices.contains(label)) return;
+    if(vertices.containsKey(label)) return;
     
     vertices.put(label, numVertices);
     indToVert.put(numVertices, label);
 
-    for(int i = 0; i < numVertices; i++)
-    {
-      edges.get(i).set(numVertices);
-    }
-
     numVertices++;
+
     BitSet newSet = new BitSet(numVertices);
     newSet.clear();
     
