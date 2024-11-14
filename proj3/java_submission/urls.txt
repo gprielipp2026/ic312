@@ -1,0 +1,4 @@
+https://docs.oracle.com/javase/tutorial/uiswing/components/dialog.html#features
+https://stackoverflow.com/questions/8852560/how-to-make-popup-window-in-java
+https://docs.oracle.com/en/java/javase/11/docs/api/java.desktop/javax/swing/JOptionPane.html
+
