@@ -10,5 +10,8 @@ import java.awt.event.ActionEvent;
 
 public class TypingEvent extends ActionEvent
 {
-
+    public TypingEvent(Object source, int id, String command)
+    {
+        super(source, id, command);
+    }
 }

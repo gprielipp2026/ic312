@@ -11,5 +11,8 @@ import java.awt.event.ActionEvent;
 
 public class EnterEvent extends ActionEvent
 {
-
+    public EnterEvent (Object source, int id, String command)
+    {
+        super(source, id, command);
+    }
 }

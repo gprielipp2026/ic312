@@ -10,5 +10,8 @@ import javax.swing.event.ChangeEvent;
 
 public class SliderEvent extends ChangeEvent 
 {
-
+    public SliderEvent(Object source)
+    {
+        super(source);
+    }
 }
