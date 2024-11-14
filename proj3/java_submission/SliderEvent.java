@@ -6,9 +6,9 @@
  * Can also be sent out by the FPS field changing and enter being submitted
  */
 
-import java.awt.event.ActionEvent;
+import javax.swing.event.ChangeEvent;
 
-public class SliderEvent extends ActionEvent
+public class SliderEvent extends ChangeEvent 
 {
 
 }

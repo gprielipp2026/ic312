@@ -12,25 +12,31 @@ import java.awt.Dimension;
 
 public class App extends JPanel
 {
+  private EventDispatcher dispatcher;
   private UserInputs usrInputs;
+  private DrawingFrame canvas;
 
   public App()
   {
     super();
 
-    setPreferredSize(new Dimension(600, 400));
+    setSize(new Dimension(600, 400));
     setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-
-    usrInputs = new UserInputs(600, 50, null);
+    
+    dispatcher = new EventDispatcher();
+    usrInputs = new UserInputs(600, 50, dispatcher);
+    canvas    = new DrawingFrame(600, 350);
 
     add(usrInputs);
+    add(canvas);
   }
 
   public static void main(String[] args)
   {
-    JFrame win = new JFrame();
+    JFrame win = new JFrame("Red-Black Tree Visualization");
     win.add(new App());
-    
+   
+    win.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
     win.addWindowListener(new ShutdownListener());
 
     win.pack();

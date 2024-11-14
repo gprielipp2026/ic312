@@ -7,6 +7,7 @@ compile:
 
 test: compile
 	java -ea -cp .:$(JUNIT_JAR):$(HAMCREST) org.junit.runner.JUnitCore GraphTest
+	java -ea -cp .:$(JUNIT_JAR):$(HAMCREST) org.junit.runner.JUnitCore CycleFinderTest 
 
 %.pdf: %.dot
 	neato $< -Tpdf >$@
