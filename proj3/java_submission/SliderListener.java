@@ -16,16 +16,19 @@ public class SliderListener implements ChangeListener, ActionListener
 {
   private JTextField textField;
   private JSlider slider; 
+  private Clock clock;
 
-  public SliderListener(JTextField field, JSlider slider)
+  public SliderListener(JTextField field, JSlider slider, Clock clock)
   {
     this.slider = slider;
     textField = field;
+    this.clock = clock;
   }
   
   public void stateChanged(ChangeEvent e)
   {
     Integer val = this.slider.getValue();
+    clock.updateFPS(val);
     textField.setText(val.toString());    
   }
 
@@ -36,6 +39,7 @@ public class SliderListener implements ChangeListener, ActionListener
       if( val >= slider.getMinimum() && val <= slider.getMaximum())
       {
         slider.setValue(val);
+        clock.updateFPS(val);
       }
       else
       {

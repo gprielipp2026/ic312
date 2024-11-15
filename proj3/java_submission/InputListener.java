@@ -10,6 +10,8 @@
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
+import javax.swing.JOptionPane;
+import javax.swing.JFrame;
 
 public class InputListener implements ActionListener
 {
@@ -41,36 +43,83 @@ public class InputListener implements ActionListener
     Integer value = null;
     boolean found = false;
     InputOptions.Commands cmd = InputOptions.Commands.NULL;
+    // look at the insert text field
     try {
-      value = Integer.parseInt(insert.getText());
-      cmd = InputOptions.Commands.INSERT;
-      found = true;
-      insert.setText("insert");
+      if(!insert.getText().equals("insert"))
+      {
+        value = Integer.parseInt(insert.getText());
+        cmd = InputOptions.Commands.INSERT;
+        found = true;
+        insert.setText("insert");
+      } 
     } 
-    catch (Exception e1) {} 
-    try {
-      value = Integer.parseInt(search.getText());
-      cmd = InputOptions.Commands.SEARCH;
-      if (found) { /* do some bad error */ }
-      found = true;
-      search.setText("search");
+    catch(NumberFormatException e1)
+    {
+      JOptionPane.showMessageDialog(new JFrame(),
+          e1.getMessage() + " is not an integer",
+          "Integer parse error",
+          JOptionPane.ERROR_MESSAGE);
     }
-    catch (Exception e2) {} 
+    // look at the search text field
     try {
-      value = Integer.parseInt(remove.getText());
-      cmd = InputOptions.Commands.REMOVE;
-      if (found) { /* do some bad error */ }
-      found = true;
-      remove.setText("remove");
+      if(!search.getText().equals("search"))
+      {
+        value = Integer.parseInt(search.getText());
+        cmd = InputOptions.Commands.SEARCH;
+        if (found) 
+        { 
+          /* do some bad error */ 
+          JOptionPane.showMessageDialog(new JFrame(), 
+              "Only one function can be used at a time", 
+              "Too many arguments error", 
+              JOptionPane.ERROR_MESSAGE); 
+          search.setText("search");
+          return; 
+        }
+        found = true;
+        search.setText("search");
+      } 
     }
-    catch (Exception e3) {} 
-    
+    catch (NumberFormatException e2) 
+    {
+      JOptionPane.showMessageDialog(new JFrame(),
+          e2.getMessage() + " is not an integer",
+          "Integer parse error",
+          JOptionPane.ERROR_MESSAGE);
+    } 
+    // look at the remove text field
+    try {
+      if(!remove.getText().equals("remove"))
+      {
+        value = Integer.parseInt(remove.getText());
+        cmd = InputOptions.Commands.REMOVE;
+        if (found) 
+        { 
+          /* do some bad error */ 
+          JOptionPane.showMessageDialog(new JFrame(), 
+              "Only one function can be used at a time", 
+              "Too many arguments error", 
+              JOptionPane.ERROR_MESSAGE); 
+          remove.setText("remove");
+          return; 
+        }
+        found = true;
+        remove.setText("remove");
+      } 
+    }
+    catch (NumberFormatException e3) 
+    {
+      JOptionPane.showMessageDialog(new JFrame(),
+          e3.getMessage() + " is not an integer",
+          "Integer parse error",
+          JOptionPane.ERROR_MESSAGE);
+    } 
+
     if (found) 
     {
       options.update(cmd, value);
       // trigger some event
-      System.out.println(options);
-      //dispatcher.dispatch(new InputEvent.from(options));
+      dispatcher.dispatch(InputEvent.from(options));
     }
   }
 }

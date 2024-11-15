@@ -25,16 +25,18 @@ public class UserInputs extends JPanel
   private int fpsval = 12;
   private JSlider slider;
   private JButton enter;
-  //private Clock clock; // generates TickEvents based on fpsval
+  private Clock clock; // generates TickEvents based on fpsval
   private InputOptions options; // will be a command and a value; ex: SEARCH 10
   private EventDispatcher<InputEvent> dispatcher;
 
-  public UserInputs(int pwidth, int pheight, EventDispatcher<InputEvent> dispatcher)
+  public UserInputs(int pwidth, int pheight, EventDispatcher<InputEvent> dispatcher, Clock clock)
   {
     super();
 
     this.dispatcher = dispatcher; 
-    
+    this.clock = clock;
+    this.clock.updateFPS(this.fpsval);
+
     this.insert = new JTextField("insert");
     this.remove = new JTextField("remove");
     this.search = new JTextField("search");
@@ -54,7 +56,7 @@ public class UserInputs extends JPanel
     this.search.addActionListener(inputListener); 
 
     this.slider = new JSlider(0, 30, this.fpsval);
-    SliderListener sliderListener = new SliderListener(this.fps, this.slider);
+    SliderListener sliderListener = new SliderListener(this.fps, this.slider, this.clock);
     this.fps.addActionListener(sliderListener); 
     
     this.slider.setMajorTickSpacing(5);
@@ -72,19 +74,35 @@ public class UserInputs extends JPanel
     setSize(new Dimension(pwidth, pheight));
     
     //                       rows, col, hgap, wgap 
-    setLayout(new GridLayout(   2,    3,  10,   10));
-    add(insert);
-    add(remove);
-    
+    setLayout(new GridLayout(   1,    3,  10,   10));
+    //setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+
+    JPanel col1 = new JPanel();
+    col1.setLayout(new BoxLayout(col1, BoxLayout.Y_AXIS));
+    col1.add(insert);
+    col1.add(search);
+
+
+    JPanel col2 = new JPanel();
+    col2.setLayout(new BoxLayout(col2, BoxLayout.Y_AXIS));
+    col2.add(remove);
+    col2.add(enter);
+
+
     JPanel fpsPanel = new JPanel();
     fpsPanel.setLayout(new BoxLayout(fpsPanel, BoxLayout.X_AXIS));
     fpsPanel.add(fpsLabel);
     fpsPanel.add(this.fps);
+
+
+    JPanel col3 = new JPanel();
+    col3.setLayout(new BoxLayout(col3, BoxLayout.Y_AXIS));
+    col3.add(fpsPanel);
+    col3.add(slider);    
+
     
-    add(fpsPanel);
-    
-    add(search);
-    add(enter );
-    add(slider);
+    add(col1);
+    add(col2);
+    add(col3);
   }
 }

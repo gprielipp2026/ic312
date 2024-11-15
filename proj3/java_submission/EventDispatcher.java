@@ -32,6 +32,7 @@ public class EventDispatcher<E extends ActionEvent> implements Runnable, Consume
    */
   public void dispatch(E event) 
   {
+    System.out.println("dispatching(" + event + ")");
     events.add(event);
 
     if(worker == null)
